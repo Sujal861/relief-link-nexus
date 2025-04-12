@@ -18,6 +18,7 @@ import Privacy from "./pages/Privacy";
 import Terms from "./pages/Terms";
 import Assessment from "./pages/Assessment";
 import Verification from "./pages/Verification";
+import AIInsights from "./pages/AIInsights";
 
 const queryClient = new QueryClient();
 
@@ -41,6 +42,7 @@ const App = () => (
           <Route path="/terms" element={<Terms />} />
           <Route path="/assessment" element={<Assessment />} />
           <Route path="/verification" element={<Verification />} />
+          <Route path="/ai-insights" element={<AIInsights />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

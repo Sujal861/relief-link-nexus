@@ -1,7 +1,8 @@
 
-import { AlertTriangle, Package, Truck, Users, MapPin, AlertCircle } from "lucide-react";
+import { AlertTriangle, Package, Truck, Users, MapPin, AlertCircle, Brain } from "lucide-react";
 import { StatCard } from "@/components/ui/stat-card";
 import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
 
 export const OverviewTab = () => {
   return (
@@ -30,7 +31,15 @@ export const OverviewTab = () => {
       </div>
       
       <div className="bg-white rounded-lg shadow-md p-6">
-        <h2 className="text-2xl font-display font-bold mb-4">Priority Situations</h2>
+        <div className="flex justify-between items-center mb-4">
+          <h2 className="text-2xl font-display font-bold">Priority Situations</h2>
+          <Link to="/ai-insights">
+            <Button className="bg-relief-black text-relief-lime hover:bg-relief-black/90 flex items-center gap-2">
+              <Brain size={16} />
+              View AI Insights
+            </Button>
+          </Link>
+        </div>
         <div className="space-y-4">
           <div className="flex items-center p-4 bg-red-50 border-l-4 border-red-500 rounded">
             <AlertTriangle className="text-red-500 mr-3" />
