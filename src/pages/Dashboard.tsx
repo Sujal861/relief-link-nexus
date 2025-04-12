@@ -5,7 +5,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { StatCard } from "@/components/ui/stat-card";
 import { 
-  MapPin, Layers, Package, TruckDelivery, 
+  MapPin, Layers, Package, Truck, 
   AlertTriangle, Users, AlertCircle
 } from "lucide-react";
 
@@ -71,7 +71,7 @@ const Dashboard = () => {
                 <StatCard
                   title="Shipments in Transit"
                   value="156"
-                  icon={<TruckDelivery size={24} />}
+                  icon={<Truck size={24} />}
                 />
                 <StatCard
                   title="Field Teams"
@@ -147,7 +147,7 @@ const Dashboard = () => {
                   <div className="space-y-4">
                     <div className="flex items-center p-3 border-b border-gray-100">
                       <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-3">
-                        <TruckDelivery size={20} />
+                        <Truck size={20} />
                       </div>
                       <div>
                         <h3 className="font-medium">Medical Equipment</h3>
@@ -158,7 +158,7 @@ const Dashboard = () => {
                     
                     <div className="flex items-center p-3 border-b border-gray-100">
                       <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-3">
-                        <TruckDelivery size={20} />
+                        <Truck size={20} />
                       </div>
                       <div>
                         <h3 className="font-medium">Emergency Rations</h3>
@@ -169,7 +169,7 @@ const Dashboard = () => {
                     
                     <div className="flex items-center p-3 border-b border-gray-100">
                       <div className="w-10 h-10 bg-purple-100 text-purple-600 rounded-full flex items-center justify-center mr-3">
-                        <TruckDelivery size={20} />
+                        <Truck size={20} />
                       </div>
                       <div>
                         <h3 className="font-medium">Water Filters</h3>
@@ -256,3 +256,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
