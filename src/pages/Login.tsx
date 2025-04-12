@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LockIcon, UserIcon } from "lucide-react";
+import { toast } from "sonner";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -17,6 +18,7 @@ const Login = () => {
     e.preventDefault();
     // In a real app, we would authenticate the user here
     console.log("Login attempt with:", email);
+    toast.success("Login successful!");
     navigate("/dashboard");
   };
   
