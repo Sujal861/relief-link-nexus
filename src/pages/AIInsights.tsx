@@ -66,7 +66,7 @@ const AIInsights = () => {
     {
       id: 1,
       title: "Water Shortage Predicted",
-      severity: "high",
+      severity: "high" as const,
       probability: 87,
       description: "Based on current consumption rates and supply chain disruptions, the North and East districts will face critical water shortages within 72 hours.",
       reasoning: "Analysis of water distribution logs shows consumption outpacing delivery by 18%. Weather patterns indicate no rainfall for the next 5 days, and 3 of 7 water purification systems are operating at reduced capacity.",
@@ -75,7 +75,7 @@ const AIInsights = () => {
     {
       id: 2,
       title: "Medical Supply Distribution Inefficiency",
-      severity: "medium",
+      severity: "medium" as const,
       probability: 76,
       description: "Current medical supply routes are inefficient, causing 30% longer delivery times than optimal.",
       reasoning: "Route analysis shows supplies traveling through congested areas. Last-mile delivery is delayed due to unoptimized drop zone placement. Correlation between medical request timestamps and delivery confirmation shows systematic delay patterns.",
@@ -84,7 +84,7 @@ const AIInsights = () => {
     {
       id: 3,
       title: "Potential Disease Outbreak",
-      severity: "high",
+      severity: "high" as const,
       probability: 65,
       description: "Patterns in medical requests suggest early signs of respiratory infection spread in South District shelters.",
       reasoning: "40% increase in respiratory-related medical requests in last 48 hours confined to a 3-mile radius. Temperature and humidity levels in shelters SH-142 and SH-156 are conducive to viral spread. Similar pattern identified in previous crisis events.",
@@ -93,7 +93,7 @@ const AIInsights = () => {
     {
       id: 4,
       title: "Food Stockpile Depletion Risk",
-      severity: "medium",
+      severity: "medium" as const,
       probability: 82,
       description: "Food supplies projected to be critically low in 96 hours based on current distribution rates.",
       reasoning: "Inventory tracking shows accelerated depletion of non-perishable food items. Incoming shipments delayed due to road conditions in sector R-12. Population count in East District 16% higher than initial assessment.",
@@ -106,49 +106,49 @@ const AIInsights = () => {
       id: 1,
       title: "Water Supply Anomaly Detected",
       time: "09:23 AM",
-      type: "detection",
+      type: "detection" as const,
       description: "AI detected unusual water consumption patterns in North District"
     },
     {
       id: 2,
       title: "Initial Analysis Completed",
       time: "09:46 AM",
-      type: "analysis",
+      type: "analysis" as const,
       description: "Preliminary analysis indicates potential infrastructure failure in water distribution network"
     },
     {
       id: 3,
       title: "Field Team Dispatched",
       time: "10:12 AM",
-      type: "action",
+      type: "action" as const,
       description: "Field team sent to investigate reported water pressure issues at distribution point NW-24"
     },
     {
       id: 4,
       title: "Problem Source Identified",
       time: "11:18 AM",
-      type: "discovery",
+      type: "discovery" as const,
       description: "Main valve failure at junction J-12 confirmed as source of reduced water pressure"
     },
     {
       id: 5,
       title: "Repair Plan Generated",
       time: "11:45 AM",
-      type: "analysis",
+      type: "analysis" as const,
       description: "AI generated optimal repair plan and resource allocation for quick resolution"
     },
     {
       id: 6,
       title: "Repair Team Deployed",
       time: "12:10 PM",
-      type: "action",
+      type: "action" as const,
       description: "Technical team RT-7 dispatched with necessary parts and equipment"
     },
     {
       id: 7,
       title: "Repair Completed",
       time: "03:42 PM",
-      type: "resolution",
+      type: "resolution" as const,
       description: "Valve replacement successful, water pressure restored to normal levels"
     }
   ];
