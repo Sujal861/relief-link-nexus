@@ -1,8 +1,9 @@
 
-import { AlertTriangle, Package, Truck, Users, MapPin, AlertCircle, Brain } from "lucide-react";
+import { AlertTriangle, Package, Truck, Users, MapPin, AlertCircle, Brain, GitBranch, LineChart, FileCheck, Building } from "lucide-react";
 import { StatCard } from "@/components/ui/stat-card";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 export const OverviewTab = () => {
   return (
@@ -28,6 +29,124 @@ export const OverviewTab = () => {
           value="34"
           icon={<Users size={24} />}
         />
+      </div>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <Card className="p-6">
+          <CardHeader className="p-0 pb-4">
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <GitBranch className="text-relief-lime" size={20} />
+                Supply Chain Tracking
+              </span>
+              <Link to="/inventory">
+                <Button variant="outline" size="sm">View Details</Button>
+              </Link>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <p className="text-sm text-gray-600 mb-4">Track all supplies from donors to affected areas with transparent records.</p>
+            <div className="flex flex-wrap gap-2">
+              <Link to="/inventory">
+                <Button variant="secondary" size="sm" className="flex items-center gap-1">
+                  <Package size={14} /> Inventory
+                </Button>
+              </Link>
+              <Link to="/drop-zones">
+                <Button variant="secondary" size="sm" className="flex items-center gap-1">
+                  <MapPin size={14} /> Drop Zones
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="p-6">
+          <CardHeader className="p-0 pb-4">
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <LineChart className="text-relief-lime" size={20} />
+                Real-time Needs Monitoring
+              </span>
+              <Link to="/ai-insights">
+                <Button variant="outline" size="sm">View Details</Button>
+              </Link>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <p className="text-sm text-gray-600 mb-4">AI-powered analysis of crisis zones to identify and predict critical needs.</p>
+            <div className="flex flex-wrap gap-2">
+              <Link to="/ai-insights">
+                <Button variant="secondary" size="sm" className="flex items-center gap-1">
+                  <Brain size={14} /> AI Insights
+                </Button>
+              </Link>
+              <Link to="/assessment">
+                <Button variant="secondary" size="sm" className="flex items-center gap-1">
+                  <AlertCircle size={14} /> Assessment
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="p-6">
+          <CardHeader className="p-0 pb-4">
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <FileCheck className="text-relief-lime" size={20} />
+                Transparency & Accountability
+              </span>
+              <Link to="/reports">
+                <Button variant="outline" size="sm">View Details</Button>
+              </Link>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <p className="text-sm text-gray-600 mb-4">Complete verification and audit trail for all resources and operations.</p>
+            <div className="flex flex-wrap gap-2">
+              <Link to="/reports">
+                <Button variant="secondary" size="sm" className="flex items-center gap-1">
+                  <FileCheck size={14} /> Reports
+                </Button>
+              </Link>
+              <Link to="/verification">
+                <Button variant="secondary" size="sm" className="flex items-center gap-1">
+                  <FileCheck size={14} /> Verification
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
+        
+        <Card className="p-6">
+          <CardHeader className="p-0 pb-4">
+            <CardTitle className="flex items-center justify-between">
+              <span className="flex items-center gap-2">
+                <Building className="text-relief-lime" size={20} />
+                NGO & Government Collaboration
+              </span>
+              <Link to="/reports">
+                <Button variant="outline" size="sm">View Details</Button>
+              </Link>
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="p-0">
+            <p className="text-sm text-gray-600 mb-4">Tools for seamless coordination between organizations responding to the crisis.</p>
+            <div className="flex flex-wrap gap-2">
+              <Link to="/reports">
+                <Button variant="secondary" size="sm" className="flex items-center gap-1">
+                  <Users size={14} /> Partners
+                </Button>
+              </Link>
+              <Link to="/assessment">
+                <Button variant="secondary" size="sm" className="flex items-center gap-1">
+                  <Building size={14} /> Resources
+                </Button>
+              </Link>
+            </div>
+          </CardContent>
+        </Card>
       </div>
       
       <div className="bg-white rounded-lg shadow-md p-6">
