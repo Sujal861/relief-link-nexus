@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Activity } from "lucide-react";
+import { Activity, Heart } from "lucide-react";
 
 interface DashboardHeaderProps {
   activeTab: string;
@@ -47,6 +47,14 @@ export const DashboardHeader = ({ activeTab, setActiveTab }: DashboardHeaderProp
           >
             <Activity size={16} className="mr-1" />
             Live Events
+          </Button>
+          <Button 
+            variant={activeTab === "donations" ? "default" : "ghost"} 
+            className={activeTab === "donations" ? "bg-relief-lime text-relief-black rounded-b-none" : "text-relief-lime hover:text-white rounded-b-none"}
+            onClick={() => setActiveTab("donations")}
+          >
+            <Heart size={16} className="mr-1" />
+            Donations
           </Button>
         </div>
       </div>

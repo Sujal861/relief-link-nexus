@@ -7,6 +7,7 @@ import { OverviewTab } from "@/components/dashboard/OverviewTab";
 import { MapTab } from "@/components/dashboard/MapTab";
 import { AlertsTab } from "@/components/dashboard/AlertsTab";
 import { LiveEventsTab } from "@/components/dashboard/LiveEventsTab";
+import { DonationsTab } from "@/components/dashboard/DonationsTab";
 import { Toaster } from "@/components/ui/toaster";
 
 const Dashboard = () => {
@@ -32,6 +33,9 @@ const Dashboard = () => {
           
           {/* Live Events Tab Content */}
           {activeTab === "live" && <LiveEventsTab />}
+          
+          {/* Donations Tab Content */}
+          {activeTab === "donations" && <DonationsTab />}
         </div>
       </main>
       
