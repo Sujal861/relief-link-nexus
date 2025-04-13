@@ -1,5 +1,6 @@
 
 import { Button } from "@/components/ui/button";
+import { Activity } from "lucide-react";
 
 interface DashboardHeaderProps {
   activeTab: string;
@@ -38,6 +39,14 @@ export const DashboardHeader = ({ activeTab, setActiveTab }: DashboardHeaderProp
             onClick={() => setActiveTab("alerts")}
           >
             Alerts
+          </Button>
+          <Button 
+            variant={activeTab === "live" ? "default" : "ghost"} 
+            className={activeTab === "live" ? "bg-relief-lime text-relief-black rounded-b-none" : "text-relief-lime hover:text-white rounded-b-none"}
+            onClick={() => setActiveTab("live")}
+          >
+            <Activity size={16} className="mr-1" />
+            Live Events
           </Button>
         </div>
       </div>
