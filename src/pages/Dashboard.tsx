@@ -6,6 +6,7 @@ import { DashboardHeader } from "@/components/dashboard/DashboardHeader";
 import { OverviewTab } from "@/components/dashboard/OverviewTab";
 import { MapTab } from "@/components/dashboard/MapTab";
 import { AlertsTab } from "@/components/dashboard/AlertsTab";
+import { Toaster } from "@/components/ui/toaster";
 
 const Dashboard = () => {
   // Track which tab is active
@@ -31,6 +32,7 @@ const Dashboard = () => {
       </main>
       
       <Footer />
+      <Toaster />
     </div>
   );
 };
