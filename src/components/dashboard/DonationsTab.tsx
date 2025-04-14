@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { 
   Building,
@@ -14,7 +15,8 @@ import {
   Check, 
   ChevronDown, 
   ChevronUp,
-  DollarSign
+  DollarSign,
+  CreditCard
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -24,6 +26,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import * as StellarSdk from 'stellar-sdk';
 
 export const DonationsTab = () => {
   const { toast } = useToast();
@@ -37,6 +41,10 @@ export const DonationsTab = () => {
   const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
   const [selectedFoundation, setSelectedFoundation] = useState<string | null>(null);
   const [donationAmount, setDonationAmount] = useState<string>("");
+  const [paymentMethod, setPaymentMethod] = useState<string>("credit-card");
+  const [stellarPublicKey, setStellarPublicKey] = useState<string>("");
+  const [stellarPaymentStatus, setStellarPaymentStatus] = useState<string>("");
+  const [showStellarInfo, setShowStellarInfo] = useState<boolean>(false);
   
   // Mock data for foundations
   const foundations = [
@@ -48,9 +56,9 @@ export const DonationsTab = () => {
   
   // Mock data for donations
   const donations = [
-    { id: 1, foundation: "Red Cross Relief", amount: 500, date: "2025-04-10", donor: "Anonymous" },
-    { id: 2, foundation: "Global Children Fund", amount: 1200, date: "2025-04-08", donor: "John Smith" },
-    { id: 3, foundation: "Disaster Response Network", amount: 750, date: "2025-04-05", donor: "Corporate Partner" },
+    { id: 1, foundation: "Red Cross Relief", amount: 500, date: "2025-04-10", donor: "Anonymous", method: "Credit Card" },
+    { id: 2, foundation: "Global Children Fund", amount: 1200, date: "2025-04-08", donor: "John Smith", method: "Stellar" },
+    { id: 3, foundation: "Disaster Response Network", amount: 750, date: "2025-04-05", donor: "Corporate Partner", method: "Credit Card" },
   ];
   
   // Mock data for pending registrations
@@ -77,6 +85,52 @@ export const DonationsTab = () => {
     setShowRegisterCharity(false);
   };
 
+  // Process Stellar payment
+  const processStellarPayment = async () => {
+    if (!stellarPublicKey || !donationAmount || parseFloat(donationAmount) <= 0) {
+      toast({
+        title: "Invalid Details",
+        description: "Please enter a valid Stellar address and donation amount.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Set processing state
+    setStellarPaymentStatus("processing");
+
+    try {
+      // Simulate Stellar payment processing
+      setTimeout(() => {
+        setStellarPaymentStatus("success");
+        
+        toast({
+          title: "Stellar Payment Successful",
+          description: `Thank you for your XLM donation! Transaction complete.`,
+          children: (
+            <div className="flex items-center mt-2">
+              <img src="https://stellar.org/favicon.ico" alt="Stellar" className="h-4 w-4 mr-2" />
+              <span>Payment confirmed on Stellar network</span>
+            </div>
+          )
+        });
+        
+        setIsDonationModalOpen(false);
+        setStellarPublicKey("");
+        setDonationAmount("");
+        setSelectedFoundation(null);
+        setStellarPaymentStatus("");
+      }, 2000);
+    } catch (error) {
+      setStellarPaymentStatus("failed");
+      toast({
+        title: "Payment Failed",
+        description: "There was an error processing your Stellar payment. Please try again.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const handleMakeDonation = (e: React.FormEvent) => {
     e.preventDefault();
     
@@ -89,6 +143,12 @@ export const DonationsTab = () => {
       return;
     }
     
+    if (paymentMethod === "stellar") {
+      processStellarPayment();
+      return;
+    }
+    
+    // Default credit card payment flow
     toast({
       title: "Donation Successful",
       description: `Thank you for your generous contribution of $${donationAmount}!`,
@@ -232,6 +292,61 @@ export const DonationsTab = () => {
                   />
                 </div>
                 
+                {/* Payment Method Selection */}
+                <div className="space-y-2">
+                  <label>Payment Method</label>
+                  <RadioGroup 
+                    value={paymentMethod} 
+                    onValueChange={setPaymentMethod}
+                    className="flex flex-col space-y-2"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="credit-card" id="credit-card" />
+                      <label htmlFor="credit-card" className="flex items-center">
+                        <CreditCard className="h-4 w-4 mr-2" />
+                        Credit Card
+                      </label>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <RadioGroupItem value="stellar" id="stellar" />
+                      <label htmlFor="stellar" className="flex items-center">
+                        <img src="https://stellar.org/favicon.ico" alt="Stellar" className="h-4 w-4 mr-2" />
+                        Stellar (XLM)
+                      </label>
+                    </div>
+                  </RadioGroup>
+                </div>
+                
+                {/* Conditional Stellar Address field */}
+                {paymentMethod === 'stellar' && (
+                  <div className="space-y-2">
+                    <div className="flex items-center">
+                      <label htmlFor="stellar-address">Stellar Public Key</label>
+                      <Button 
+                        type="button" 
+                        variant="ghost" 
+                        size="sm" 
+                        className="ml-2 h-6 w-6 p-0" 
+                        onClick={() => setShowStellarInfo(!showStellarInfo)}
+                      >
+                        <Info className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {showStellarInfo && (
+                      <div className="text-sm text-muted-foreground bg-gray-50 p-2 rounded-md">
+                        Enter your Stellar public key to make a donation with Stellar Lumens (XLM). 
+                        The donation will be processed on the Stellar network.
+                      </div>
+                    )}
+                    <Input 
+                      id="stellar-address" 
+                      placeholder="G..." 
+                      value={stellarPublicKey}
+                      onChange={(e) => setStellarPublicKey(e.target.value)}
+                    />
+                  </div>
+                )}
+                
                 <div className="space-y-2">
                   <label htmlFor="name">Your Name (Optional)</label>
                   <Input id="name" placeholder="Anonymous" />
@@ -359,6 +474,7 @@ export const DonationsTab = () => {
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donor</th>
+                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
                       </tr>
                     </thead>
@@ -367,6 +483,18 @@ export const DonationsTab = () => {
                         <td className="px-6 py-4 whitespace-nowrap">2025-04-10</td>
                         <td className="px-6 py-4 whitespace-nowrap">$500.00</td>
                         <td className="px-6 py-4 whitespace-nowrap">Anonymous</td>
+                        <td className="px-6 py-4 whitespace-nowrap">Credit Card</td>
+                        <td className="px-6 py-4 whitespace-nowrap">
+                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
+                            Received
+                          </span>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-6 py-4 whitespace-nowrap">2025-04-08</td>
+                        <td className="px-6 py-4 whitespace-nowrap">$1,200.00</td>
+                        <td className="px-6 py-4 whitespace-nowrap">John Smith</td>
+                        <td className="px-6 py-4 whitespace-nowrap">Stellar</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                             Received
@@ -375,18 +503,9 @@ export const DonationsTab = () => {
                       </tr>
                       <tr>
                         <td className="px-6 py-4 whitespace-nowrap">2025-04-05</td>
-                        <td className="px-6 py-4 whitespace-nowrap">$1,200.00</td>
-                        <td className="px-6 py-4 whitespace-nowrap">Corporate Partner</td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                            Received
-                          </span>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className="px-6 py-4 whitespace-nowrap">2025-04-02</td>
                         <td className="px-6 py-4 whitespace-nowrap">$750.00</td>
-                        <td className="px-6 py-4 whitespace-nowrap">John Smith</td>
+                        <td className="px-6 py-4 whitespace-nowrap">Corporate Partner</td>
+                        <td className="px-6 py-4 whitespace-nowrap">Credit Card</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
                             Received
@@ -622,6 +741,7 @@ export const DonationsTab = () => {
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Foundation</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Method</th>
                           <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Donor</th>
                         </tr>
                       </thead>
@@ -632,6 +752,7 @@ export const DonationsTab = () => {
                             <td className="px-6 py-4 whitespace-nowrap">{donation.date}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{donation.foundation}</td>
                             <td className="px-6 py-4 whitespace-nowrap">${donation.amount.toFixed(2)}</td>
+                            <td className="px-6 py-4 whitespace-nowrap">{donation.method}</td>
                             <td className="px-6 py-4 whitespace-nowrap">{donation.donor}</td>
                           </tr>
                         ))}
@@ -755,6 +876,67 @@ export const DonationsTab = () => {
               />
             </div>
             
+            {/* Payment Method Selection */}
+            <div className="space-y-2">
+              <label>Payment Method</label>
+              <RadioGroup 
+                value={paymentMethod} 
+                onValueChange={setPaymentMethod}
+                className="flex flex-col space-y-2"
+              >
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="credit-card" id="modal-credit-card" />
+                  <label htmlFor="modal-credit-card" className="flex items-center">
+                    <CreditCard className="h-4 w-4 mr-2" />
+                    Credit Card
+                  </label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="stellar" id="modal-stellar" />
+                  <label htmlFor="modal-stellar" className="flex items-center">
+                    <img src="https://stellar.org/favicon.ico" alt="Stellar" className="h-4 w-4 mr-2" />
+                    Stellar (XLM)
+                  </label>
+                </div>
+              </RadioGroup>
+            </div>
+            
+            {/* Conditional Stellar Address field */}
+            {paymentMethod === 'stellar' && (
+              <div className="space-y-2">
+                <div className="flex items-center">
+                  <label htmlFor="modal-stellar-address">Stellar Public Key</label>
+                  <Button 
+                    type="button" 
+                    variant="ghost" 
+                    size="sm" 
+                    className="ml-2 h-6 w-6 p-0" 
+                    onClick={() => setShowStellarInfo(!showStellarInfo)}
+                  >
+                    <Info className="h-4 w-4" />
+                  </Button>
+                </div>
+                {showStellarInfo && (
+                  <div className="text-sm text-muted-foreground bg-gray-50 p-2 rounded-md">
+                    Enter your Stellar public key to make a donation with Stellar Lumens (XLM). 
+                    The donation will be processed on the Stellar network.
+                  </div>
+                )}
+                <Input 
+                  id="modal-stellar-address" 
+                  placeholder="G..." 
+                  value={stellarPublicKey}
+                  onChange={(e) => setStellarPublicKey(e.target.value)}
+                />
+                {stellarPaymentStatus === "processing" && (
+                  <div className="flex items-center justify-center p-2">
+                    <RefreshCw className="animate-spin h-4 w-4 mr-2" />
+                    <span>Processing payment on Stellar network...</span>
+                  </div>
+                )}
+              </div>
+            )}
+            
             <div className="space-y-2">
               <label htmlFor="modal-name">Your Name (Optional)</label>
               <Input id="modal-name" placeholder="Anonymous" />
@@ -770,7 +952,16 @@ export const DonationsTab = () => {
                 Cancel
               </Button>
               <Button type="submit" className="bg-relief-lime text-relief-black hover:bg-relief-lime/90">
-                <DollarSign className="mr-2" size={16} /> Confirm Donation
+                {paymentMethod === 'stellar' ? (
+                  <>
+                    <img src="https://stellar.org/favicon.ico" alt="Stellar" className="h-4 w-4 mr-2" />
+                    Donate with Stellar
+                  </>
+                ) : (
+                  <>
+                    <DollarSign className="mr-2" size={16} /> Confirm Donation
+                  </>
+                )}
               </Button>
             </DialogFooter>
           </form>
