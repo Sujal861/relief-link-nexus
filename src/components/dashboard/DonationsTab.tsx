@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { 
   Building,
@@ -14,7 +13,8 @@ import {
   Plus, 
   Check, 
   ChevronDown, 
-  ChevronUp 
+  ChevronUp,
+  DollarSign
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -23,6 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 
 export const DonationsTab = () => {
   const { toast } = useToast();
@@ -31,6 +32,11 @@ export const DonationsTab = () => {
   const [showFoundations, setShowFoundations] = useState(true);
   const [showDonations, setShowDonations] = useState(true);
   const [showPendingRegistrations, setShowPendingRegistrations] = useState(true);
+  
+  // State for donation modal
+  const [isDonationModalOpen, setIsDonationModalOpen] = useState(false);
+  const [selectedFoundation, setSelectedFoundation] = useState<string | null>(null);
+  const [donationAmount, setDonationAmount] = useState<string>("");
   
   // Mock data for foundations
   const foundations = [
@@ -53,6 +59,14 @@ export const DonationsTab = () => {
     { id: 2, name: "Medical Aid Society", description: "Medical supplies and support", contact: "contact@medaid.org" },
   ];
 
+  // Handle opening donation modal
+  const handleOpenDonationModal = (foundationId?: number) => {
+    if (foundationId) {
+      setSelectedFoundation(foundationId.toString());
+    }
+    setIsDonationModalOpen(true);
+  };
+
   // Handle form submissions
   const handleRegisterCharity = (e: React.FormEvent) => {
     e.preventDefault();
@@ -65,10 +79,30 @@ export const DonationsTab = () => {
 
   const handleMakeDonation = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!donationAmount || parseFloat(donationAmount) <= 0) {
+      toast({
+        title: "Invalid Amount",
+        description: "Please enter a valid donation amount.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     toast({
       title: "Donation Successful",
-      description: "Thank you for your generous contribution!",
+      description: `Thank you for your generous contribution of $${donationAmount}!`,
+      children: (
+        <div className="flex items-center mt-2">
+          <DollarSign className="h-4 w-4 text-green-500 mr-2" />
+          <span>Your donation has been processed</span>
+        </div>
+      )
     });
+    
+    setIsDonationModalOpen(false);
+    setDonationAmount("");
+    setSelectedFoundation(null);
   };
   
   const handleApproveRegistration = (id: number) => {
@@ -145,7 +179,10 @@ export const DonationsTab = () => {
                       <CardDescription>{foundation.description}</CardDescription>
                     </CardHeader>
                     <CardFooter>
-                      <Button className="w-full">
+                      <Button 
+                        className="w-full"
+                        onClick={() => handleOpenDonationModal(foundation.id)}
+                      >
                         <Heart className="mr-2" /> Donate Now
                       </Button>
                     </CardFooter>
@@ -169,7 +206,7 @@ export const DonationsTab = () => {
               <form onSubmit={handleMakeDonation} className="space-y-4">
                 <div className="space-y-2">
                   <label htmlFor="foundation">Select Foundation</label>
-                  <Select defaultValue="1">
+                  <Select defaultValue="1" onValueChange={setSelectedFoundation}>
                     <SelectTrigger id="foundation">
                       <SelectValue placeholder="Select Foundation" />
                     </SelectTrigger>
@@ -185,7 +222,14 @@ export const DonationsTab = () => {
                 
                 <div className="space-y-2">
                   <label htmlFor="amount">Donation Amount ($)</label>
-                  <Input id="amount" type="number" placeholder="0.00" min="5" />
+                  <Input 
+                    id="amount" 
+                    type="number" 
+                    placeholder="0.00" 
+                    min="5" 
+                    value={donationAmount}
+                    onChange={(e) => setDonationAmount(e.target.value)}
+                  />
                 </div>
                 
                 <div className="space-y-2">
@@ -667,6 +711,71 @@ export const DonationsTab = () => {
           </CardContent>
         </Card>
       )}
+
+      {/* Donation Modal */}
+      <Dialog open={isDonationModalOpen} onOpenChange={setIsDonationModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Make a Donation</DialogTitle>
+            <DialogDescription>
+              Your contribution helps provide essential relief to those in need.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <form onSubmit={handleMakeDonation} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="modal-foundation">Select Foundation</label>
+              <Select 
+                value={selectedFoundation || undefined} 
+                onValueChange={setSelectedFoundation}
+              >
+                <SelectTrigger id="modal-foundation">
+                  <SelectValue placeholder="Select Foundation" />
+                </SelectTrigger>
+                <SelectContent>
+                  {foundations.filter(f => f.approved).map((foundation) => (
+                    <SelectItem key={foundation.id} value={foundation.id.toString()}>
+                      {foundation.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="modal-amount">Donation Amount ($)</label>
+              <Input 
+                id="modal-amount" 
+                type="number" 
+                placeholder="0.00" 
+                min="5" 
+                value={donationAmount}
+                onChange={(e) => setDonationAmount(e.target.value)}
+                required
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="modal-name">Your Name (Optional)</label>
+              <Input id="modal-name" placeholder="Anonymous" />
+            </div>
+            
+            <div className="space-y-2">
+              <label htmlFor="modal-message">Message (Optional)</label>
+              <Textarea id="modal-message" placeholder="Add a personal message..." />
+            </div>
+            
+            <DialogFooter>
+              <Button type="button" variant="outline" onClick={() => setIsDonationModalOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" className="bg-relief-lime text-relief-black hover:bg-relief-lime/90">
+                <DollarSign className="mr-2" size={16} /> Confirm Donation
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
