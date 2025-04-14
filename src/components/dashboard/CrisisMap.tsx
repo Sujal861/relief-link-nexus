@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useCallback } from 'react';
 import { GoogleMap, useLoadScript, Marker, InfoWindow, Polyline } from '@react-google-maps/api';
 import { AlertTriangle } from 'lucide-react';
@@ -279,7 +278,19 @@ const CrisisMap: React.FC<CrisisMapProps> = ({
               strokeColor: '#0ea5e9',
               strokeOpacity: 0.8,
               strokeWeight: 3,
-              strokePattern: [10, 5]
+              icons: [
+                {
+                  icon: {
+                    path: google.maps.SymbolPath.CIRCLE,
+                    scale: 5,
+                    fillOpacity: 0,
+                    strokeColor: '#0ea5e9',
+                    strokeWeight: 1,
+                  },
+                  offset: '0',
+                  repeat: '20px'
+                }
+              ]
             }}
             onClick={() => setSelectedMarker({
               ...route,
