@@ -30,7 +30,13 @@ const Dashboard = () => {
         toast({
           title: "You're back online",
           description: "All your changes will now be synchronized",
-          icon: <CheckCircle className="h-4 w-4 text-green-500" />
+          // Fixed: Removed the 'icon' property and use proper content instead
+          children: (
+            <div className="flex items-center">
+              <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
+              <span>Connection restored</span>
+            </div>
+          )
         });
         setLastSynced(new Date());
       } else {
