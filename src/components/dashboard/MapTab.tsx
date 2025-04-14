@@ -6,6 +6,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
+import CrisisMap from "./CrisisMap";
 
 export const MapTab = () => {
   const [isMapDownloaded, setIsMapDownloaded] = useState(false);
@@ -117,32 +118,14 @@ export const MapTab = () => {
         </div>
       </div>
       
-      <div className="bg-gray-200 aspect-video flex items-center justify-center p-6">
-        <div className="text-center text-gray-500">
-          <Layers className="w-16 h-16 mx-auto mb-4 opacity-40" />
-          <p className="text-lg font-medium">Interactive Crisis Map</p>
-          <p className="text-sm">The map would display here with affected areas, drop zones, and supply routes</p>
-          <div className="mt-4 grid grid-cols-3 gap-2 max-w-md mx-auto">
-            {showDropZones && (
-              <div className="flex items-center gap-1 text-sm">
-                <MapPin size={14} className="text-red-500" />
-                <span>Drop Zones</span>
-              </div>
-            )}
-            {showRoutes && (
-              <div className="flex items-center gap-1 text-sm">
-                <Upload size={14} className="text-blue-500" />
-                <span>Supply Routes</span>
-              </div>
-            )}
-            {showTeams && (
-              <div className="flex items-center gap-1 text-sm">
-                <Download size={14} className="text-green-500" />
-                <span>Field Teams</span>
-              </div>
-            )}
-          </div>
-        </div>
+      {/* Replace the placeholder with the actual map component */}
+      <div className="p-6">
+        <CrisisMap 
+          showDropZones={showDropZones}
+          showRoutes={showRoutes}
+          showTeams={showTeams}
+          isMapDownloaded={isMapDownloaded}
+        />
       </div>
     </div>
   );
