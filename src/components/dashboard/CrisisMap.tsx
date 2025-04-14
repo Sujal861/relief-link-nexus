@@ -1,6 +1,7 @@
-import React, { useState, useRef, useCallback } from 'react';
+
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { GoogleMap, useLoadScript, Marker, InfoWindow, Polyline } from '@react-google-maps/api';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Navigation } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 // Crisis locations data for demonstration
@@ -50,6 +51,8 @@ interface CrisisMapProps {
   showRoutes: boolean;
   showTeams: boolean;
   isMapDownloaded: boolean;
+  initialCenter?: { lat: number; lng: number };
+  showUserLocation?: boolean;
 }
 
 const mapContainerStyle = {
@@ -58,7 +61,7 @@ const mapContainerStyle = {
   borderRadius: '0.5rem',
 };
 
-const center = {
+const defaultCenter = {
   lat: 31.5,
   lng: 35.0
 };
@@ -67,21 +70,79 @@ const CrisisMap: React.FC<CrisisMapProps> = ({
   showDropZones, 
   showRoutes, 
   showTeams,
-  isMapDownloaded
+  isMapDownloaded,
+  initialCenter,
+  showUserLocation = false
 }) => {
   const [apiKey, setApiKey] = useState<string>('');
   const [isKeySet, setIsKeySet] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const [center, setCenter] = useState(initialCenter || defaultCenter);
+  const [isLocating, setIsLocating] = useState(false);
   const { toast } = useToast();
 
   // See if we have a saved API key
-  React.useEffect(() => {
+  useEffect(() => {
     const savedKey = localStorage.getItem('google-maps-key');
     if (savedKey) {
       setApiKey(savedKey);
       setIsKeySet(true);
     }
   }, []);
+
+  // Track user location if enabled
+  useEffect(() => {
+    if (!showUserLocation) return;
+    
+    let watchId: number;
+    
+    const successCallback = (position: GeolocationPosition) => {
+      const { latitude, longitude } = position.coords;
+      setUserLocation({ lat: latitude, lng: longitude });
+      setIsLocating(false);
+      
+      // If we get location for the first time, center the map on user
+      if (!userLocation) {
+        setCenter({ lat: latitude, lng: longitude });
+      }
+    };
+    
+    const errorCallback = (error: GeolocationPositionError) => {
+      console.error("Error getting location:", error);
+      setIsLocating(false);
+      toast({
+        title: "Location Error",
+        description: `Could not access your location: ${error.message}`,
+        variant: "destructive"
+      });
+    };
+    
+    if (navigator.geolocation) {
+      setIsLocating(true);
+      watchId = navigator.geolocation.watchPosition(
+        successCallback,
+        errorCallback,
+        {
+          enableHighAccuracy: true,
+          maximumAge: 0,
+          timeout: 5000
+        }
+      );
+    } else {
+      toast({
+        title: "Geolocation not supported",
+        description: "Your browser does not support geolocation",
+        variant: "destructive"
+      });
+    }
+    
+    return () => {
+      if (watchId) {
+        navigator.geolocation.clearWatch(watchId);
+      }
+    };
+  }, [showUserLocation, toast, userLocation]);
 
   const saveApiKey = (key: string) => {
     setApiKey(key);
@@ -269,6 +330,29 @@ const CrisisMap: React.FC<CrisisMapProps> = ({
           />
         ))}
 
+        {/* User Location Marker */}
+        {showUserLocation && userLocation && (
+          <Marker
+            position={userLocation}
+            icon={{
+              path: google.maps.SymbolPath.CIRCLE,
+              scale: 8,
+              fillColor: '#3b82f6',
+              fillOpacity: 0.8,
+              strokeWeight: 2,
+              strokeColor: '#ffffff'
+            }}
+            onClick={() => setSelectedMarker({
+              name: 'Your Location',
+              coordinates: userLocation,
+              type: 'user'
+            })}
+          >
+            {/* Add a pulsating effect around the user location */}
+            <div className="absolute w-6 h-6 bg-blue-500/30 rounded-full animate-ping"></div>
+          </Marker>
+        )}
+
         {/* Supply Routes */}
         {showRoutes && SUPPLY_ROUTES.map((route) => (
           <Polyline
@@ -326,6 +410,9 @@ const CrisisMap: React.FC<CrisisMapProps> = ({
               {selectedMarker.type === 'route' && (
                 <p className="text-xs mt-1"><strong>Type:</strong> Supply route</p>
               )}
+              {selectedMarker.type === 'user' && (
+                <p className="text-xs mt-1"><strong>Your current location</strong></p>
+              )}
             </div>
           </InfoWindow>
         )}
@@ -360,8 +447,34 @@ const CrisisMap: React.FC<CrisisMapProps> = ({
               <span>Supply Routes</span>
             </div>
           )}
+          {showUserLocation && userLocation && (
+            <div className="flex items-center">
+              <div className="w-3 h-3 rounded-full bg-blue-500 mr-2"></div>
+              <span>Your Location</span>
+            </div>
+          )}
         </div>
       </div>
+      
+      {showUserLocation && (
+        <button 
+          className="absolute top-4 right-4 z-10 bg-white p-2 rounded-full shadow-lg hover:bg-gray-100 transition-colors"
+          onClick={() => {
+            if (userLocation) {
+              mapRef.current?.panTo(userLocation);
+              mapRef.current?.setZoom(14);
+            } else {
+              toast({
+                title: "Finding your location",
+                description: "Please wait while we locate you",
+              });
+            }
+          }}
+          disabled={isLocating}
+        >
+          <Navigation size={20} className="text-blue-600" />
+        </button>
+      )}
     </div>
   );
 };

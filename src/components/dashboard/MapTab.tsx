@@ -1,5 +1,5 @@
 
-import { Layers, MapPin, Download, Upload, RefreshCw } from "lucide-react";
+import { Layers, MapPin, Download, Upload, RefreshCw, Navigation } from "lucide-react";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
@@ -14,6 +14,7 @@ export const MapTab = () => {
   const [showDropZones, setShowDropZones] = useState(true);
   const [showRoutes, setShowRoutes] = useState(true);
   const [showTeams, setShowTeams] = useState(true);
+  const [showUserLocation, setShowUserLocation] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(new Date());
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { toast } = useToast();
@@ -113,18 +114,26 @@ export const MapTab = () => {
           <Label htmlFor="teams" className="text-sm">Field Teams</Label>
         </div>
         
+        <div className="flex items-center space-x-2">
+          <Switch id="user-location" checked={showUserLocation} onCheckedChange={setShowUserLocation} />
+          <Label htmlFor="user-location" className="text-sm flex items-center">
+            <Navigation size={14} className="mr-1 text-blue-500" />
+            My Location
+          </Label>
+        </div>
+        
         <div className="flex items-center ml-auto">
           <span className="text-xs text-gray-500">Last updated: {lastUpdated.toLocaleTimeString()}</span>
         </div>
       </div>
       
-      {/* Replace the placeholder with the actual map component */}
       <div className="p-6">
         <CrisisMap 
           showDropZones={showDropZones}
           showRoutes={showRoutes}
           showTeams={showTeams}
           isMapDownloaded={isMapDownloaded}
+          showUserLocation={showUserLocation}
         />
       </div>
     </div>

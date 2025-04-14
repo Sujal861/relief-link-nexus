@@ -2,14 +2,21 @@ import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MapPin, Filter, RefreshCw, Search, Clock, Users, Package, FileCheck, Building, GitBranch } from "lucide-react";
+import { MapPin, Filter, RefreshCw, Search, Clock, Users, Package, FileCheck, Building, GitBranch, Navigation, Layers } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { useState } from "react";
 import { CollaborationPanel } from "@/components/dropzones/CollaborationPanel";
+import CrisisMap from "@/components/dashboard/CrisisMap";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 const DropZones = () => {
   const [selectedZone, setSelectedZone] = useState("DZ-001");
+  const [showDropZones, setShowDropZones] = useState(true);
+  const [showRoutes, setShowRoutes] = useState(true);
+  const [showTeams, setShowTeams] = useState(false);
+  const [showUserLocation, setShowUserLocation] = useState(true);
   
   const dropZones = [
     {
@@ -99,6 +106,7 @@ const DropZones = () => {
           <Tabs defaultValue="overview" className="mb-6">
             <TabsList>
               <TabsTrigger value="overview">Overview</TabsTrigger>
+              <TabsTrigger value="map">Interactive Map</TabsTrigger>
               <TabsTrigger value="collaboration">Collaboration</TabsTrigger>
               <TabsTrigger value="verification">Verification</TabsTrigger>
             </TabsList>
@@ -303,6 +311,79 @@ const DropZones = () => {
                       </div>
                     </TabsContent>
                   </Tabs>
+                </div>
+              </div>
+            </TabsContent>
+            
+            <TabsContent value="map">
+              <div className="bg-white p-6 rounded-lg shadow-md">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-display font-bold">Drop Zone Map</h2>
+                  <div className="flex gap-2">
+                    <Button variant="outline" size="sm" className="flex items-center gap-1">
+                      <Layers size={14} /> Change Map Type
+                    </Button>
+                  </div>
+                </div>
+                
+                <div className="bg-gray-100 p-4 border-b border-gray-200 flex flex-wrap gap-6 mb-4">
+                  <div className="flex items-center space-x-2">
+                    <Switch id="drop-zones-map" checked={showDropZones} onCheckedChange={setShowDropZones} />
+                    <Label htmlFor="drop-zones-map" className="text-sm">Drop Zones</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch id="routes-map" checked={showRoutes} onCheckedChange={setShowRoutes} />
+                    <Label htmlFor="routes-map" className="text-sm">Supply Routes</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch id="teams-map" checked={showTeams} onCheckedChange={setShowTeams} />
+                    <Label htmlFor="teams-map" className="text-sm">Field Teams</Label>
+                  </div>
+                  
+                  <div className="flex items-center space-x-2">
+                    <Switch id="user-location-map" checked={showUserLocation} onCheckedChange={setShowUserLocation} />
+                    <Label htmlFor="user-location-map" className="text-sm flex items-center">
+                      <Navigation size={14} className="mr-1 text-blue-500" />
+                      My Location
+                    </Label>
+                  </div>
+                </div>
+                
+                <div className="h-[60vh] bg-gray-50 rounded-lg overflow-hidden">
+                  <CrisisMap 
+                    showDropZones={showDropZones}
+                    showRoutes={showRoutes}
+                    showTeams={showTeams}
+                    isMapDownloaded={false}
+                    showUserLocation={showUserLocation}
+                    initialCenter={{ lat: 34.05, lng: 118.25 }} 
+                  />
+                </div>
+                
+                <div className="mt-4 p-4 bg-gray-50 rounded-lg">
+                  <h3 className="font-bold mb-2">Selected Drop Zone Information</h3>
+                  {currentZone && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Name</p>
+                        <p className="font-medium">{currentZone.name}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Status</p>
+                        <p className="font-medium">{currentZone.status}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Coordinates</p>
+                        <p className="font-medium">{currentZone.coordinates}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-gray-600 mb-1">Staffed</p>
+                        <p className="font-medium">{currentZone.staffed}</p>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </div>
             </TabsContent>
