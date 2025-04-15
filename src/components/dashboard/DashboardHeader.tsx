@@ -1,8 +1,9 @@
 
 import { Button } from "@/components/ui/button";
-import { Activity, Heart, Menu } from "lucide-react";
-import { useState } from "react";
+import { Activity, Heart, Menu, ChevronDown, X, AlertTriangle, Truck, MapPin, Database } from "lucide-react";
+import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Badge } from "@/components/ui/badge";
 
 interface DashboardHeaderProps {
   activeTab: string;
@@ -11,6 +12,8 @@ interface DashboardHeaderProps {
 
 export const DashboardHeader = ({ activeTab, setActiveTab }: DashboardHeaderProps) => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const [lastSynced, setLastSynced] = useState(new Date());
   const isMobile = useIsMobile();
   
   const handleTabChange = (tab: string) => {
@@ -20,19 +23,50 @@ export const DashboardHeader = ({ activeTab, setActiveTab }: DashboardHeaderProp
     }
   };
   
+  // Auto-collapse header on scroll for mobile
+  useEffect(() => {
+    if (!isMobile) return;
+    
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      setIsCollapsed(scrollPosition > 50);
+    };
+    
+    window.addEventListener('scroll', handleScroll);
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, [isMobile]);
+  
+  // Simulate periodic background syncs
+  useEffect(() => {
+    if (navigator.onLine) {
+      const interval = setInterval(() => {
+        setLastSynced(new Date());
+      }, 30000); // Update every 30 seconds
+      
+      return () => clearInterval(interval);
+    }
+  }, []);
+  
   const tabOptions = [
-    { id: "overview", label: "Overview", icon: null },
-    { id: "map", label: "Crisis Map", icon: null },
-    { id: "alerts", label: "Alerts", icon: null },
+    { id: "overview", label: "Overview", icon: <Database size={16} className="mr-1" /> },
+    { id: "map", label: "Crisis Map", icon: <MapPin size={16} className="mr-1" /> },
+    { id: "alerts", label: "Alerts", icon: <AlertTriangle size={16} className="mr-1" /> },
     { id: "live", label: "Live Events", icon: <Activity size={16} className="mr-1" /> },
     { id: "donations", label: "Donations", icon: <Heart size={16} className="mr-1" /> },
   ];
   
   return (
-    <div className="bg-relief-black py-6 md:py-8">
+    <div className={`bg-relief-black py-4 md:py-8 sticky top-0 z-30 transition-all duration-300 ${
+      isCollapsed ? 'py-2 md:py-3' : ''
+    }`}>
       <div className="container px-4 md:px-6">
         <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl md:text-4xl font-display font-bold text-relief-lime">
+          <h1 className={`text-2xl md:text-4xl font-display font-bold text-relief-lime transition-all duration-300 ${
+            isCollapsed ? 'text-xl md:text-2xl' : ''
+          }`}>
             Crisis Dashboard
           </h1>
           
@@ -42,14 +76,16 @@ export const DashboardHeader = ({ activeTab, setActiveTab }: DashboardHeaderProp
               className="text-relief-lime p-2"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
             >
-              <Menu size={24} />
+              {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </Button>
           )}
         </div>
         
-        <p className="text-gray-400 max-w-3xl mb-4">
-          Monitor active crises, supply chains, and aid distribution in real-time.
-        </p>
+        {!isCollapsed && (
+          <p className="text-gray-400 max-w-3xl mb-4 transition-opacity duration-300">
+            Monitor active crises, supply chains, and aid distribution in real-time.
+          </p>
+        )}
         
         {/* Desktop Tabs */}
         {!isMobile && (
@@ -82,7 +118,9 @@ export const DashboardHeader = ({ activeTab, setActiveTab }: DashboardHeaderProp
                   {tabOptions.find(tab => tab.id === activeTab)?.icon}
                   {tabOptions.find(tab => tab.id === activeTab)?.label}
                 </span>
-                <Menu size={16} className="ml-2" />
+                <ChevronDown size={16} className={`ml-2 transition-transform duration-300 ${
+                  mobileMenuOpen ? 'rotate-180' : ''
+                }`} />
               </Button>
             </div>
             
@@ -105,6 +143,29 @@ export const DashboardHeader = ({ activeTab, setActiveTab }: DashboardHeaderProp
               </div>
             )}
           </>
+        )}
+        
+        {/* Bottom system status - only show on mobile when collapsed */}
+        {isMobile && isCollapsed && (
+          <div className="flex justify-between items-center mt-1 text-xs text-gray-400">
+            <div className="flex items-center space-x-2">
+              <Badge 
+                variant="outline" 
+                className={`px-1.5 py-0.5 ${navigator.onLine ? 'bg-green-900/20 text-green-400' : 'bg-amber-900/20 text-amber-400'}`}
+              >
+                {navigator.onLine ? 'ONLINE' : 'OFFLINE'}
+              </Badge>
+              <Badge 
+                variant="outline" 
+                className="px-1.5 py-0.5 bg-blue-900/20 text-blue-400"
+              >
+                <Truck size={10} className="mr-1" /> GPS ACTIVE
+              </Badge>
+            </div>
+            <div>
+              Synced: {lastSynced.toLocaleTimeString()}
+            </div>
+          </div>
         )}
       </div>
     </div>

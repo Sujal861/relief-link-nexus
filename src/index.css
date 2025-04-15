@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Montserrat:wght@600;700;800;900&display=swap');
 
 @tailwind base;
@@ -163,6 +164,57 @@
   .dashboard-stats-mobile {
     @apply grid grid-cols-2 gap-3;
   }
+  
+  /* Field Operations button on mobile */
+  .field-op-button {
+    @apply flex items-center justify-center;
+  }
+  
+  /* Battery status indicators */
+  .battery-indicator {
+    @apply relative inline-block h-4 w-8 border border-gray-400 rounded-sm overflow-hidden;
+  }
+  
+  .battery-level {
+    @apply absolute left-0 top-0 bottom-0 bg-green-500;
+  }
+  
+  .battery-level-low {
+    @apply bg-red-500;
+  }
+  
+  .battery-level-medium {
+    @apply bg-amber-500;
+  }
+  
+  /* QR Code scanner overlay */
+  .qr-scanner-overlay {
+    @apply fixed inset-0 bg-black/80 flex items-center justify-center z-50;
+  }
+  
+  .qr-scanner-target {
+    @apply w-64 h-64 border-2 border-white/60 rounded-lg relative;
+  }
+  
+  .qr-scanner-corner {
+    @apply absolute w-6 h-6 border-2 border-relief-lime;
+  }
+  
+  .qr-scanner-corner-tl {
+    @apply top-0 left-0 border-r-0 border-b-0;
+  }
+  
+  .qr-scanner-corner-tr {
+    @apply top-0 right-0 border-l-0 border-b-0;
+  }
+  
+  .qr-scanner-corner-bl {
+    @apply bottom-0 left-0 border-r-0 border-t-0;
+  }
+  
+  .qr-scanner-corner-br {
+    @apply bottom-0 right-0 border-l-0 border-t-0;
+  }
 }
 
 /* Mobile-friendly animations */
@@ -181,6 +233,17 @@
   to { transform: translateY(0); opacity: 1; }
 }
 
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes scanning {
+  0% { top: 0; }
+  50% { top: calc(100% - 2px); }
+  100% { top: 0; }
+}
+
 .animate-fade-in {
   animation: fadeIn 0.3s ease-out;
 }
@@ -191,6 +254,14 @@
 
 .animate-slide-down {
   animation: slideDown 0.4s ease-out;
+}
+
+.animate-pulse {
+  animation: pulse 2s ease-in-out infinite;
+}
+
+.animate-scanning {
+  animation: scanning 2s ease-in-out infinite;
 }
 
 /* Improved touch interactions */
@@ -239,6 +310,57 @@
     @apply flex-shrink-0 w-[85%];
     scroll-snap-align: start;
   }
+  
+  /* Dialog/popover enhancements for mobile */
+  .mobile-full-dialog {
+    @apply fixed inset-0 m-0 rounded-none max-w-none;
+  }
+  
+  /* Bottom navbar safe area (for mobile) */
+  .safe-area-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+  
+  /* Mobile-optimized table */
+  .mobile-table td {
+    @apply block w-full before:content-[attr(data-label)] before:block before:font-medium before:text-xs before:text-gray-500;
+  }
+  
+  .mobile-table th {
+    @apply hidden;
+  }
+  
+  /* Force all tables to be responsive on mobile */
+  table:not(.preserve-layout) {
+    @apply block w-full;
+  }
+  
+  table:not(.preserve-layout) tbody {
+    @apply block w-full;
+  }
+  
+  table:not(.preserve-layout) tr {
+    @apply block w-full mb-4 border rounded-md overflow-hidden;
+  }
+  
+  table:not(.preserve-layout) td {
+    @apply block w-full p-3 border-none relative pl-28;
+  }
+  
+  table:not(.preserve-layout) td:before {
+    @apply absolute left-3 w-24 font-medium text-gray-500 text-left top-3;
+    content: attr(data-label);
+  }
+  
+  /* Button group for mobile */
+  .button-group-vertical {
+    @apply flex flex-col w-full space-y-2;
+  }
+  
+  /* Floating action button for mobile */
+  .floating-action-button {
+    @apply fixed bottom-6 right-6 w-14 h-14 rounded-full bg-relief-lime shadow-lg flex items-center justify-center;
+  }
 }
 
 /* Landscape orientation adjustments */
@@ -250,6 +372,32 @@
   .mobile-landscape-adjust {
     @apply flex flex-row gap-4;
   }
+  
+  /* Different layout for field operations in landscape */
+  .field-operations-landscape {
+    @apply flex-row;
+  }
+  
+  /* Override default table behavior in landscape */
+  table.landscape-preserve {
+    @apply table;
+  }
+  
+  table.landscape-preserve tbody {
+    @apply table-row-group;
+  }
+  
+  table.landscape-preserve tr {
+    @apply table-row;
+  }
+  
+  table.landscape-preserve td {
+    @apply table-cell p-4 border-b relative pl-4;
+  }
+  
+  table.landscape-preserve td:before {
+    @apply hidden;
+  }
 }
 
 /* Use viewport height correctly for mobile browsers */
@@ -260,4 +408,15 @@
 .h-screen-dynamic {
   height: 100vh; /* Fallback */
   height: calc(var(--vh, 1vh) * 100);
+}
+
+/* Offline indicator styles */
+.offline-indicator {
+  @apply fixed bottom-0 inset-x-0 bg-amber-500 text-white text-center py-1 text-sm z-50;
+}
+
+/* Scanning animation for QR code scanner */
+.scanner-line {
+  @apply absolute inset-x-0 h-0.5 bg-relief-lime shadow-md;
+  animation: scanning 1.5s infinite ease-in-out;
 }
