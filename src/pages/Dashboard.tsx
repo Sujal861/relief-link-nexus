@@ -161,7 +161,7 @@ const Dashboard = () => {
         </div>
         
         <div className="container px-4 md:px-6 py-4 md:py-8">
-          {/* Dashboard Tab Content with improved animation */}
+          {/* Dashboard Tab Content - restored PC view, kept mobile animation */}
           <div className={`${isMobile ? 'animate-fade-in' : ''}`}>
             {/* Overview Tab Content */}
             {activeTab === "overview" && <OverviewTab />}
