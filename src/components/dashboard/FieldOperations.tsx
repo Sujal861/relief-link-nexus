@@ -45,10 +45,14 @@ export const FieldOperations = () => {
         setBatteryLevel(Math.floor(battery.level * 100));
       };
       
-      navigator.getBattery?.().then((battery: any) => {
-        updateBatteryStatus(battery);
-        battery.addEventListener('levelchange', () => updateBatteryStatus(battery));
-      });
+      // Fix: Use window.navigator.getBattery instead of navigator.getBattery
+      // The error was because navigator.getBattery might be undefined or not callable
+      if (typeof navigator.getBattery === 'function') {
+        navigator.getBattery().then((battery: any) => {
+          updateBatteryStatus(battery);
+          battery.addEventListener('levelchange', () => updateBatteryStatus(battery));
+        });
+      }
     }
     
     // Check connection status
