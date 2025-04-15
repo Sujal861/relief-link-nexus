@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -27,6 +26,19 @@ import {
 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
+interface BatteryManager {
+  charging: boolean;
+  chargingTime: number;
+  dischargingTime: number;
+  level: number;
+  addEventListener(type: string, listener: EventListenerOrEventListenerObject): void;
+  removeEventListener(type: string, listener: EventListenerOrEventListenerObject): void;
+}
+
+interface NavigatorWithBattery extends Navigator {
+  getBattery?: () => Promise<BatteryManager>;
+}
+
 export const FieldOperations = () => {
   const [isOfflineMode, setIsOfflineMode] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
@@ -37,25 +49,22 @@ export const FieldOperations = () => {
   const [pendingSync, setPendingSync] = useState(0);
   const { toast } = useToast();
   
-  // Simulate battery monitoring
   useEffect(() => {
-    // Check if Battery API is available
     if ('getBattery' in navigator) {
-      const updateBatteryStatus = (battery: any) => {
+      const updateBatteryStatus = (battery: BatteryManager) => {
         setBatteryLevel(Math.floor(battery.level * 100));
       };
       
-      // Fix: Use window.navigator.getBattery instead of navigator.getBattery
-      // The error was because navigator.getBattery might be undefined or not callable
-      if (typeof navigator.getBattery === 'function') {
-        navigator.getBattery().then((battery: any) => {
+      const nav = navigator as NavigatorWithBattery;
+      
+      if (typeof nav.getBattery === 'function') {
+        nav.getBattery().then((battery) => {
           updateBatteryStatus(battery);
           battery.addEventListener('levelchange', () => updateBatteryStatus(battery));
         });
       }
     }
     
-    // Check connection status
     const updateConnectionStatus = () => {
       setIsOfflineMode(!navigator.onLine);
       
@@ -70,17 +79,14 @@ export const FieldOperations = () => {
     window.addEventListener('online', updateConnectionStatus);
     window.addEventListener('offline', updateConnectionStatus);
     
-    // Set initial status
     updateConnectionStatus();
     
-    // Cleanup
     return () => {
       window.removeEventListener('online', updateConnectionStatus);
       window.removeEventListener('offline', updateConnectionStatus);
     };
   }, [pendingSync, toast]);
   
-  // Simulate geolocation monitoring
   useEffect(() => {
     if (!navigator.geolocation) {
       setLocationStatus("unsupported");
@@ -96,16 +102,13 @@ export const FieldOperations = () => {
       }
     );
     
-    // Cleanup
     return () => {
       navigator.geolocation.clearWatch(locationWatchId);
     };
   }, []);
   
-  // Simulate pending operations when offline
   useEffect(() => {
     if (isOfflineMode) {
-      // Simulate some pending operations accumulating while offline
       const interval = setInterval(() => {
         setPendingSync(prev => Math.min(prev + 1, 15));
       }, 30000);
@@ -118,7 +121,6 @@ export const FieldOperations = () => {
     e.preventDefault();
     setIsSaving(true);
     
-    // Simulate saving - different behavior for online/offline
     setTimeout(() => {
       setIsSaving(false);
       
@@ -149,7 +151,6 @@ export const FieldOperations = () => {
     setIsSyncing(true);
     setSyncProgress(0);
     
-    // Simulate sync progress
     const interval = setInterval(() => {
       setSyncProgress(prev => {
         if (prev >= 100) {
@@ -189,21 +190,17 @@ export const FieldOperations = () => {
           </div>
           
           <div className="flex items-center space-x-2">
-            {/* Device status indicators */}
             <div className="hidden md:flex items-center space-x-3 text-xs text-gray-500">
-              {/* Battery indicator */}
               <div className="flex items-center" title={`Battery: ${batteryLevel}%`}>
                 <Battery size={14} className={batteryLevel < 20 ? "text-red-500" : "text-green-500"} />
                 <span className="ml-1">{batteryLevel}%</span>
               </div>
               
-              {/* Signal indicator */}
               <div className="flex items-center" title={isOfflineMode ? "Offline Mode" : "Online"}>
                 <Signal size={14} className={isOfflineMode ? "text-gray-400" : "text-green-500"} />
                 <span className="ml-1">{isOfflineMode ? "Offline" : "Online"}</span>
               </div>
               
-              {/* GPS indicator */}
               <div className="flex items-center" title={`GPS: ${locationStatus}`}>
                 <MapPin size={14} className={
                   locationStatus === "available" ? "text-green-500" : 
@@ -215,7 +212,6 @@ export const FieldOperations = () => {
         </div>
       </CardHeader>
       <CardContent>
-        {/* Connection Status & Sync Controls */}
         <div className="mb-6 space-y-2">
           <div className="flex justify-between items-center">
             <div className="flex items-center space-x-2">
@@ -256,7 +252,6 @@ export const FieldOperations = () => {
             </div>
           </div>
           
-          {/* Sync Progress */}
           {isSyncing && (
             <div className="space-y-1">
               <div className="flex justify-between text-xs">
@@ -267,7 +262,6 @@ export const FieldOperations = () => {
             </div>
           )}
           
-          {/* Connection Status Message */}
           <div className="text-xs">
             {isOfflineMode ? (
               <div className="flex items-center text-amber-700">
