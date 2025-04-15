@@ -11,6 +11,7 @@ import { DonationsTab } from "@/components/dashboard/DonationsTab";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { Wifi, WifiOff, CheckCircle } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Dashboard = () => {
   // Track which tab is active
@@ -20,6 +21,7 @@ const Dashboard = () => {
   // Track when data was last synced
   const [lastSynced, setLastSynced] = useState(new Date());
   const { toast } = useToast();
+  const isMobile = useIsMobile();
   
   // Monitor online status
   useEffect(() => {
@@ -30,7 +32,6 @@ const Dashboard = () => {
         toast({
           title: "You're back online",
           description: "All your changes will now be synchronized",
-          // Fixed: Removed the 'icon' property and use proper content instead
           children: (
             <div className="flex items-center">
               <CheckCircle className="h-4 w-4 text-green-500 mr-2" />
@@ -66,7 +67,7 @@ const Dashboard = () => {
         
         {/* Connection status indicator */}
         <div className="bg-white border-b border-gray-200 py-2">
-          <div className="container px-4 md:px-6 flex justify-between items-center">
+          <div className="container px-4 md:px-6 flex flex-wrap justify-between items-center gap-2">
             <div className="flex items-center space-x-2">
               {isOnline ? (
                 <span className="flex items-center text-green-600 text-sm">
@@ -84,7 +85,7 @@ const Dashboard = () => {
           </div>
         </div>
         
-        <div className="container px-4 md:px-6 py-8">
+        <div className="container px-4 md:px-6 py-4 md:py-8">
           {/* Overview Tab Content */}
           {activeTab === "overview" && <OverviewTab />}
           

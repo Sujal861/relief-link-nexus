@@ -83,8 +83,12 @@
     @apply border-border;
   }
 
+  html {
+    @apply scroll-smooth;
+  }
+
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-background text-foreground font-sans overflow-x-hidden;
   }
   
   h1, h2, h3, h4, h5, h6 {
@@ -92,36 +96,94 @@
   }
   
   h1 {
-    @apply text-5xl md:text-6xl lg:text-7xl;
+    @apply text-4xl md:text-5xl lg:text-7xl;
   }
   
   h2 {
-    @apply text-3xl md:text-4xl lg:text-5xl;
+    @apply text-2xl md:text-3xl lg:text-5xl;
   }
   
   h3 {
-    @apply text-2xl md:text-3xl;
+    @apply text-xl md:text-2xl lg:text-3xl;
   }
 }
 
 @layer components {
   .big-number {
-    @apply font-display text-6xl md:text-7xl lg:text-8xl font-black;
+    @apply font-display text-4xl md:text-6xl lg:text-8xl font-black;
   }
   
   .relief-card {
-    @apply bg-relief-lime text-relief-black p-6 rounded-lg shadow-lg;
+    @apply bg-relief-lime text-relief-black p-4 md:p-6 rounded-lg shadow-lg;
   }
   
   .relief-button {
-    @apply bg-relief-black text-relief-lime font-bold py-3 px-6 rounded-md hover:bg-opacity-80 transition-all uppercase text-lg;
+    @apply bg-relief-black text-relief-lime font-bold py-2 md:py-3 px-4 md:px-6 rounded-md hover:bg-opacity-80 transition-all uppercase text-base md:text-lg;
   }
   
   .relief-section {
-    @apply py-16 md:py-24;
+    @apply py-12 md:py-16 lg:py-24;
   }
   
   .heading-xl {
-    @apply font-display text-5xl md:text-7xl font-black uppercase tracking-tight;
+    @apply font-display text-3xl md:text-5xl lg:text-7xl font-black uppercase tracking-tight;
+  }
+
+  /* Mobile-friendly utility classes */
+  .safe-padding {
+    @apply px-4 md:px-6 py-4 md:py-6;
+  }
+
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px]; /* Ensure touch targets are at least 44x44px */
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+/* Mobile-friendly animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+.animate-slide-down {
+  animation: slideDown 0.4s ease-out;
+}
+
+/* Improved touch interactions */
+@media (max-width: 768px) {
+  button, a, input, select, [role="button"] {
+    @apply touch-target;
+  }
+  
+  /* Prevent zoom on focus for iOS Safari */
+  input, select, textarea {
+    font-size: 16px;
   }
 }
