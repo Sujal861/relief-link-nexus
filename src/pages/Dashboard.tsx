@@ -11,7 +11,7 @@ import { DonationsTab } from "@/components/dashboard/DonationsTab";
 import { Toaster } from "@/components/ui/toaster";
 import { useToast } from "@/hooks/use-toast";
 import { Wifi, WifiOff, CheckCircle } from "lucide-react";
-import { useIsMobile } from "@/hooks/use-mobile";
+import { useIsMobile, useViewportHeight } from "@/hooks/use-mobile";
 
 const Dashboard = () => {
   // Track which tab is active
@@ -22,6 +22,9 @@ const Dashboard = () => {
   const [lastSynced, setLastSynced] = useState(new Date());
   const { toast } = useToast();
   const isMobile = useIsMobile();
+  
+  // Apply viewport height adjustment for mobile
+  useViewportHeight();
   
   // Monitor online status
   useEffect(() => {
@@ -86,20 +89,23 @@ const Dashboard = () => {
         </div>
         
         <div className="container px-4 md:px-6 py-4 md:py-8">
-          {/* Overview Tab Content */}
-          {activeTab === "overview" && <OverviewTab />}
-          
-          {/* Map Tab Content */}
-          {activeTab === "map" && <MapTab />}
-          
-          {/* Alerts Tab Content */}
-          {activeTab === "alerts" && <AlertsTab />}
-          
-          {/* Live Events Tab Content */}
-          {activeTab === "live" && <LiveEventsTab />}
-          
-          {/* Donations Tab Content */}
-          {activeTab === "donations" && <DonationsTab />}
+          {/* Dashboard Tab Content */}
+          <div className={`${isMobile ? 'animate-fade-in' : ''}`}>
+            {/* Overview Tab Content */}
+            {activeTab === "overview" && <OverviewTab />}
+            
+            {/* Map Tab Content */}
+            {activeTab === "map" && <MapTab />}
+            
+            {/* Alerts Tab Content */}
+            {activeTab === "alerts" && <AlertsTab />}
+            
+            {/* Live Events Tab Content */}
+            {activeTab === "live" && <LiveEventsTab />}
+            
+            {/* Donations Tab Content */}
+            {activeTab === "donations" && <DonationsTab />}
+          </div>
         </div>
       </main>
       
