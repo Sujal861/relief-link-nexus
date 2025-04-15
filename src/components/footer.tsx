@@ -1,4 +1,3 @@
-
 import { Link } from "react-router-dom";
 
 export function Footer() {
@@ -44,15 +43,12 @@ export function Footer() {
             &copy; 2025 ReliefLink. All rights reserved.
           </p>
           <div className="flex space-x-4 mt-4 md:mt-0">
-            <Link to="#" className="text-relief-gray/60 hover:text-relief-lime transition-colors">
-              Twitter
-            </Link>
-            <Link to="#" className="text-relief-gray/60 hover:text-relief-lime transition-colors">
-              LinkedIn
-            </Link>
-            <Link to="#" className="text-relief-gray/60 hover:text-relief-lime transition-colors">
+            <a href="https://github.com/Sujal861/Sujal861.git" target="_blank" rel="noopener noreferrer" className="text-relief-gray/60 hover:text-relief-lime transition-colors">
               GitHub
-            </Link>
+            </a>
+            <a href="https://www.linkedin.com/in/sujalgupta352" target="_blank" rel="noopener noreferrer" className="text-relief-gray/60 hover:text-relief-lime transition-colors">
+              LinkedIn
+            </a>
           </div>
         </div>
       </div>
