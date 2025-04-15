@@ -236,7 +236,7 @@
   }
   
   .mobile-scroll > * {
-    @apply flex-shrink-0 w-[85%] scroll-snap-align-start;
+    @apply flex-shrink-0 w-[85%];
     scroll-snap-align: start;
   }
 }
