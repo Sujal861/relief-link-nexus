@@ -1,8 +1,8 @@
-
 import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { GoogleMap, useLoadScript, Marker, InfoWindow, Polyline } from '@react-google-maps/api';
 import { AlertTriangle, Navigation } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { config } from '@/lib/config';
 
 // Crisis locations data for demonstration
 const CRISIS_LOCATIONS = [
@@ -74,22 +74,11 @@ const CrisisMap: React.FC<CrisisMapProps> = ({
   initialCenter,
   showUserLocation = false
 }) => {
-  const [apiKey, setApiKey] = useState<string>('');
-  const [isKeySet, setIsKeySet] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<any>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [center, setCenter] = useState(initialCenter || defaultCenter);
   const [isLocating, setIsLocating] = useState(false);
   const { toast } = useToast();
-
-  // See if we have a saved API key
-  useEffect(() => {
-    const savedKey = localStorage.getItem('google-maps-key');
-    if (savedKey) {
-      setApiKey(savedKey);
-      setIsKeySet(true);
-    }
-  }, []);
 
   // Track user location if enabled
   useEffect(() => {
@@ -144,18 +133,8 @@ const CrisisMap: React.FC<CrisisMapProps> = ({
     };
   }, [showUserLocation, toast, userLocation]);
 
-  const saveApiKey = (key: string) => {
-    setApiKey(key);
-    setIsKeySet(true);
-    localStorage.setItem('google-maps-key', key);
-    toast({
-      title: "Google Maps API key saved",
-      description: "Your API key has been saved for this session",
-    });
-  };
-
   const { isLoaded, loadError } = useLoadScript({
-    googleMapsApiKey: apiKey,
+    googleMapsApiKey: config.googleMapsApiKey,
     libraries: ["places"],
   });
 
@@ -204,48 +183,6 @@ const CrisisMap: React.FC<CrisisMapProps> = ({
       <div className="flex items-center justify-center p-10 bg-white rounded-lg border border-gray-200">
         <AlertTriangle className="text-red-500 mr-2" />
         <span>Error loading Google Maps: {loadError.message}</span>
-      </div>
-    );
-  }
-
-  if (!isKeySet) {
-    return (
-      <div className="flex flex-col items-center justify-center p-10 space-y-4 bg-white rounded-lg border border-gray-200">
-        <div className="text-center mb-4">
-          <AlertTriangle size={40} className="mx-auto text-amber-500 mb-2" />
-          <h3 className="text-lg font-bold">Google Maps API Key Required</h3>
-          <p className="text-sm text-gray-600 max-w-md mx-auto">
-            To display the crisis map, please enter your Google Maps API key. You can get this from the Google Cloud Console.
-          </p>
-        </div>
-        
-        <div className="w-full max-w-md">
-          <div className="flex">
-            <input
-              type="text"
-              className="flex-1 border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-relief-lime"
-              placeholder="Enter your Google Maps API key"
-              value={apiKey}
-              onChange={(e) => setApiKey(e.target.value)}
-            />
-            <button
-              className="bg-relief-lime text-relief-black px-4 py-2 rounded-r-md hover:bg-relief-lime/90 transition-colors"
-              onClick={() => saveApiKey(apiKey)}
-            >
-              Save
-            </button>
-          </div>
-          <p className="text-xs text-gray-500 mt-2">
-            Your API key will be stored locally in your browser and is not sent to our servers.
-          </p>
-        </div>
-        
-        <div className="text-sm text-gray-600 max-w-md mx-auto border-t border-gray-200 pt-4 mt-4">
-          <p>
-            Don't have a Google Maps API key? Visit <a href="https://developers.google.com/maps/documentation/javascript/get-api-key" target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">Google Cloud Console</a> to 
-            create an API key for your project.
-          </p>
-        </div>
       </div>
     );
   }

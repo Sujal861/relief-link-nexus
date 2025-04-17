@@ -1,14 +1,15 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { Menu, X } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { useAuth } from "@/lib/auth-context";
 
 export function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const isMobile = useIsMobile();
+  const { isLoggedIn, logout } = useAuth();
   
   // Add scroll event listener to create sticky effect
   useEffect(() => {
@@ -43,9 +44,11 @@ export function Navbar() {
       <div className="container px-4 md:px-6 py-3">
         <div className="flex items-center justify-between">
           <Link to="/" className="flex items-center z-10">
-            <span className="text-xl md:text-2xl font-display font-bold tracking-tight">
-              RELIEF<span className="font-thin">LINK</span>
-            </span>
+            <img 
+              src="/logo.svg" 
+              alt="ReliefLink" 
+              className="h-8 md:h-10 w-auto"
+            />
           </Link>
           
           <nav className="hidden md:flex items-center space-x-6">
@@ -61,9 +64,18 @@ export function Navbar() {
             <Link to="/reports" className="font-medium hover:text-white transition-colors">
               Reports
             </Link>
-            <Button asChild className="bg-relief-lime text-relief-black hover:bg-relief-lime/90">
-              <Link to="/login">Login</Link>
-            </Button>
+            {!isLoggedIn ? (
+              <Button asChild className="bg-relief-lime text-relief-black hover:bg-relief-lime/90">
+                <Link to="/login">Login</Link>
+              </Button>
+            ) : (
+              <Button 
+                onClick={logout}
+                className="bg-relief-lime text-relief-black hover:bg-relief-lime/90"
+              >
+                Logout
+              </Button>
+            )}
           </nav>
           
           <Button 
@@ -110,13 +122,25 @@ export function Navbar() {
             >
               Reports
             </Link>
-            <Button 
-              asChild 
-              className="w-full mt-4 bg-relief-lime text-relief-black hover:bg-relief-lime/90"
-              onClick={() => setIsMenuOpen(false)}
-            >
-              <Link to="/login">Login</Link>
-            </Button>
+            {!isLoggedIn ? (
+              <Button 
+                asChild 
+                className="w-full mt-4 bg-relief-lime text-relief-black hover:bg-relief-lime/90"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <Link to="/login">Login</Link>
+              </Button>
+            ) : (
+              <Button 
+                onClick={() => {
+                  logout();
+                  setIsMenuOpen(false);
+                }}
+                className="w-full mt-4 bg-relief-lime text-relief-black hover:bg-relief-lime/90"
+              >
+                Logout
+              </Button>
+            )}
           </nav>
         </div>
       )}

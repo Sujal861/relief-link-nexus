@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="300" height="80" viewBox="0 0 300 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Stethoscope icon -->
+  <path d="M40 20C35 20 30 25 30 35C30 45 35 50 45 50C55 50 60 45 60 35C60 25 55 20 50 20" stroke="#7FFFD4" stroke-width="4" fill="none"/>
+  <circle cx="35" cy="25" r="5" fill="#7FFFD4"/>
+  <!-- Text -->
+  <text x="80" y="45" font-family="Arial, sans-serif" font-size="32" font-weight="bold" fill="white">ReliefLink</text>
+</svg> 

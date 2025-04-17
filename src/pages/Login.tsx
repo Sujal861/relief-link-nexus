@@ -1,4 +1,3 @@
-
 import { Navbar } from "@/components/navbar";
 import { Footer } from "@/components/footer";
 import { Button } from "@/components/ui/button";
@@ -8,16 +7,19 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { LockIcon, UserIcon } from "lucide-react";
 import { toast } from "sonner";
+import { useAuth } from "@/lib/auth-context";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const { login } = useAuth();
   
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     // In a real app, we would authenticate the user here
     console.log("Login attempt with:", email);
+    login(); // Update auth state
     toast.success("Login successful!");
     navigate("/dashboard");
   };
