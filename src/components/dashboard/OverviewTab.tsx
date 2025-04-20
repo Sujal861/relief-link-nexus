@@ -1,4 +1,3 @@
-
 import { StatCard } from "@/components/ui/stat-card";
 import { FieldOperations } from "@/components/dashboard/FieldOperations";
 import { AidAccountability } from "@/components/dashboard/AidAccountability";
@@ -17,6 +16,7 @@ export const OverviewTab = () => {
           value="7"
           icon={<AlertTriangle size={22} />}
           trend={{ value: 2, label: "vs. last month", isPositive: false }}
+          className="h-full flex flex-col justify-between"
         />
         
         <StatCard
@@ -24,6 +24,7 @@ export const OverviewTab = () => {
           value="12,345"
           icon={<Package size={22} />}
           trend={{ value: 15, label: "vs. last month", isPositive: true }}
+          className="h-full flex flex-col justify-between"
         />
         
         <StatCard
@@ -31,6 +32,7 @@ export const OverviewTab = () => {
           value="45,678"
           icon={<Users size={22} />}
           trend={{ value: 23, label: "vs. last month", isPositive: true }}
+          className="h-full flex flex-col justify-between"
         />
         
         <StatCard
@@ -38,6 +40,7 @@ export const OverviewTab = () => {
           value="89"
           icon={<Truck size={22} />}
           trend={{ value: 5, label: "vs. last month", isPositive: true }}
+          className="h-full flex flex-col justify-between"
         />
       </div>
 

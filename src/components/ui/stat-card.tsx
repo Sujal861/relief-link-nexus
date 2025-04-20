@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 
 interface StatCardProps {
@@ -28,7 +27,7 @@ export function StatCard({
         {icon && <div className="mb-2">{icon}</div>}
       </div>
       <p className="text-lg font-medium opacity-80">{title}</p>
-      <p className="big-number mt-2">{value}</p>
+      <p className="big-number mt-2 tracking-tight">{value}</p>
       
       {description && (
         <p className="text-sm mt-2 text-relief-black/70">{description}</p>
